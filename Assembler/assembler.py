@@ -1,6 +1,6 @@
 import sys
 
 file_input=sys.stdin
-file_putput=sys.stdout
+file_output=sys.stdout
 
-print("Hello World!")
+print("Hello World")
