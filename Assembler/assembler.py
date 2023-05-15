@@ -106,3 +106,95 @@ def typeF_checker(statements, i):
     if len(statements) != 1:
         file_output.write("Error, Invalid Number of Arguments for Type-F Instriuction in line "+str([i]))
         exit()
+
+statements=[]
+for line in file_input:
+    line=line.strip()
+    if line=="\n" or line==" " or line=="":
+        continue
+    lst=line.split()
+    statements.append(lst)
+    if line=="q":
+        file_output.write("You entered q\n")
+    if line=="hlt":
+        break
+
+print(len(statements))
+
+for i in statements:
+    print(i)
+
+for i in range(len(statements)):
+    if statements[i][0] in ["mov","ls","rs"]:
+        try:
+            if ('$' not in statements[i][2]):
+                statements[i][0]=statements[i][0]+'r'
+        except:
+            file_output.write("Error, Immediate not in line: "+str(i))
+            exit()
+
+labels={}
+program_counter=0
+for i in range(len(statements)):
+    if statements[i][0][len(statements[i][0]-1)]==':':
+        file_output.write("Error, Invalid statement in line: ",+str(i))
+        exit()
+    labels[statements[i][0][:-1]]=program_counter
+    statements.remove(statements[i][0])
+    if len(statements[i])==0:
+        file_output.write("Error, empty label in line: "+str(i))
+        exit()
+    if statements[i][0]!="var":
+        program_counter+=1
+
+for line in statements:
+    if len(line)==0:
+        statements.remove(line)
+
+if len(statements)>128:
+    file_output.write("Error, No. of instructions more than 128")
+    exit()
+
+for i in range(len(statements)):
+    if statements[i][0] not in opcodes.keys() and statements[i][0]!="var":
+        file_output.write("Error, Invalid instruction name in line: "+str(i))
+        exit()
+
+instructions={}
+mem_address=0
+for i in range(len(statements)):
+    if statements[i][0]!="var":
+        mem_address+=1
+
+variable_begin_at_start(statements)
+vars={}
+for i in range(len(statements)):
+    if statements[i][0]=="var":
+        vars[statements[i][1]]=mem_address
+        mem_address+=1
+
+for i in range(len(statements)):
+    if statements[i][0] in ["ld","st"]:
+        if statements[i][2] not in vars:
+            file_output.write("Error, Undefined variable used in line: "+str(i))
+            exit()
+    if statements[i][0] in ["jmp","jlt","jgt","je"]:
+        if statements[i][1] not in labels.keys():
+            file_output.write("Error, Undefined label used in line: "+str(i))
+            exit()
+
+hlt_present=False
+for i in range(len(statements)):
+    if "hlt" in statements[i]:
+        if i==len(statements)-1:
+            if (statements[i][0]=="hlt" and len(statements[i]==1)):
+                hlt_present=True
+            else:
+                file_output.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
+                exit()
+        else:
+            file_output.write("Error, hlt must be the last instruction in line: "+str(i))
+            exit()
+if not(hlt_present):
+    file_output.write("Error, missing hlt instruction")
+    exit()
