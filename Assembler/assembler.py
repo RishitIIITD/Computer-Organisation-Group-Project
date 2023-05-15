@@ -136,7 +136,7 @@ for i in range(len(statements)):
         file_output.write("Error, Invalid statement in line: ",+str(i))
         exit()
     labels[statements[i][0][:-1]]=program_counter
-    statements.remove(statements[i][0])
+    statements[i].remove(statements[i][0])
     if len(statements[i])==0:
         file_output.write("Error, empty label in line: "+str(i))
         exit()
@@ -183,7 +183,7 @@ hlt_present=False
 for i in range(len(statements)):
     if "hlt" in statements[i]:
         if i==len(statements)-1:
-            if (statements[i][0]=="hlt" and len(statements[i]==1)):
+            if (statements[i][0]=="hlt" and len(statements[i])==1):
                 hlt_present=True
             else:
                 file_output.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
