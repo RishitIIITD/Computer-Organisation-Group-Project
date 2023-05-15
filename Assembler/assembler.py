@@ -3,6 +3,11 @@ import sys
 file_input=sys.stdin
 file_output=sys.stdout
 
+# Assumptions:
+# 1. var instruction is not considered as a line
+# 2. "mov reg1 $imm" and "mov reg1 reg2" have the same initial word "mov". Therefore, some testcases may find it difficult to 
+#    differentiate between the two
+
 opcodes={
    "add":"00000",
    "sub":"00001",
@@ -38,10 +43,10 @@ registers={
 }
 
 def DecimalToBinary(num):
-    bine="{0:b}".format(int(num))
-    x=7-len(bin)
-    bine='0'*x+bin
-    return bin
+    result="{0:b}".format(int(num))
+    x=7-len(result)
+    result='0'*x+result
+    return result
 
 def register_check(reg,i):
     if reg not in registers.keys():
@@ -70,6 +75,7 @@ def imm_check(imm, i):
     except ValueError:
         file_output.write("Error, The immediate should be a whole number, line: "+str(i))
         exit()
+
 def typeA_checker(statements, i):
     if len(statements) != 4:
         file_output.write("Error, invalid No. of arguments for Type-A Instruction in line: "+str([i]))
@@ -107,18 +113,17 @@ def typeF_checker(statements, i):
         file_output.write("Error, Invalid No. of arguments for Type-F Instriuction in line: "+str([i]))
         exit()
 
+import fileinput
 statements=[]
-for line in file_input:
-    line=line.strip()
-    if line=="\n" or line==" " or line=="":
-        continue
-    lst=line.split()
-    statements.append(lst)
-    if line=="hlt":
-        break
-    
-for i in statements:
-    print(i)
+with open("sample.txt",'r') as f:
+    for line in f:
+        line=line.strip()
+        if line=="\n" or line==" " or line=="":
+            continue
+        lst=line.split()
+        statements.append(lst)
+
+out=open("output.txt",'w')
 
 for i in range(len(statements)):
     if statements[i][0] in ["mov","ls","rs"]:
@@ -126,20 +131,21 @@ for i in range(len(statements)):
             if ('$' not in statements[i][2]):
                 statements[i][0]=statements[i][0]+'r'
         except:
-            file_output.write("Error, Immediate not in line: "+str(i))
+            out.write("Error, Immediate not in line: "+str(i))
             exit()
 
 labels={}
 program_counter=0
 for i in range(len(statements)):
     if statements[i][0][len(statements[i][0])-1]==':':
-        file_output.write("Error, Invalid statement in line: "+str(i))
-        exit()
-    labels[statements[i][0][:-1]]=program_counter
-    statements[i].remove(statements[i][0])
-    if len(statements[i])==0:
-        file_output.write("Error, empty label in line: "+str(i))
-        exit()
+        if len(statements[i][0])==1:
+            out.write("Error, Invalid statement in line: "+str(i))
+            exit()
+        labels[statements[i][0][:-1]]=program_counter
+        statements[i].remove(statements[i][0])
+        if len(statements[i])==0:
+            out.write("Error, empty label in line: "+str(i))
+            exit()
     if statements[i][0]!="var":
         program_counter+=1
 
@@ -148,12 +154,12 @@ for line in statements:
         statements.remove(line)
 
 if len(statements)>128:
-    file_output.write("Error, No. of instructions more than 128")
+    out.write("Error, No. of instructions more than 128")
     exit()
 
 for i in range(len(statements)):
     if statements[i][0] not in opcodes.keys() and statements[i][0]!="var":
-        file_output.write("Error, Invalid instruction name in line: "+str(i))
+        out.write("Error, Invalid instruction name in line: "+str(i))
         exit()
 
 instructions={}
@@ -172,11 +178,11 @@ for i in range(len(statements)):
 for i in range(len(statements)):
     if statements[i][0] in ["ld","st"]:
         if statements[i][2] not in vars:
-            file_output.write("Error, Undefined variable used in line: "+str(i))
+            out.write("Error, Undefined variable used in line: "+str(i))
             exit()
     if statements[i][0] in ["jmp","jlt","jgt","je"]:
         if statements[i][1] not in labels.keys():
-            file_output.write("Error, Undefined label used in line: "+str(i))
+            out.write("Error, Undefined label used in line: "+str(i))
             exit()
 
 hlt_present=False
@@ -186,13 +192,13 @@ for i in range(len(statements)):
             if (statements[i][0]=="hlt" and len(statements[i])==1):
                 hlt_present=True
             else:
-                file_output.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
+                out.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
                 exit()
         else:
-            file_output.write("Error, hlt must be the last instruction in line: "+str(i))
+            out.write("Error, hlt must be the last instruction in line: "+str(i))
             exit()
 if not(hlt_present):
-    file_output.write("Error, missing hlt instruction")
+    out.write("Error, missing hlt instruction")
     exit()
 
 def get_memaddressA(mem_address):
@@ -201,10 +207,10 @@ def get_memaddressA(mem_address):
 def get_memaddress(mem_address):
     return labels[mem_address]
 
-def typeA(mem_address):
+def typeA(statements):
     return opcodes[statements[0]] + "0"*2 + registers[statements[1]] + registers[statements[2]] + registers[statements[3]]
 
-def typeB (mem_address):
+def typeB (statements):
     return (opcodes[statements[0]] + registers[statements[1]] + DecimalToBinary(int(statements[2])))
 
 def typeC(statements):
@@ -222,7 +228,7 @@ def typeF(statements):
 for i in range(len(statements)):
     if('FLAGS' in statements[i]):
         if(len(statements[i])!=3 or statements[i][0]!='movr' or statements[i][1]!='FLAGS'):
-            file_output.write("Error, In use of FLAGS register in line "+str(i))
+            out.write("Error, In use of FLAGS register in line "+str(i))
             exit()
         else:
             typeC_checker(statements[i],i)
@@ -251,21 +257,21 @@ for i in range(len(statements)):
 
 for i in range(len(statements)):
     if(statements[i][0] in ['add','sub','mul','xor','or','and']):
-        file_output.write(typeA(statements[i])+"\n")
+        out.write(typeA(statements[i])+"\n")
 
     elif(statements[i][0] in ['mov','ls','rs']):
-        file_output.write(typeB(statements[i])+"\n")
+        out.write(typeB(statements[i])+"\n")
 
     elif(statements[i][0] in ['movr','div','not','cmp']):
-        file_output.write(typeC(statements[i])+"\n")
+        out.write(typeC(statements[i])+"\n")
 
     elif(statements[i][0] in ['ld','st']):
-        file_output.write(typeD(statements[i])+"\n")
+        out.write(typeD(statements[i])+"\n")
 
     elif(statements[i][0] in ['jmp','jlt','jgt','je']):
-        file_output.write(typeE(statements[i])+"\n")
+        out.write(typeE(statements[i])+"\n")
 
     elif(statements[i][0]=="hlt"):
-        file_output.write(typeF(statements[i]))
+        out.write(typeF(statements[i]))
 
-file_output.close()
+out.close()
