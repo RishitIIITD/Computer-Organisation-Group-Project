@@ -53,7 +53,7 @@ def variable_begin_at_start(statements):
         count=0
         if statements[i][0]:
             if count==1:
-                file_output.write("Error, All the variable definitions are not made at the beginning of the assembly language, specifically "(statements[i][0]+" in line: "+str(i)))
+                file_output.write("Error, All the variable definitions are not made at the beginning of the assembly language, specifically "+statements[i][0]+" in line: "+str(i))
                 exit()
         else:
             count=1
