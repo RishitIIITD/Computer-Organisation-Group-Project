@@ -72,7 +72,7 @@ def imm_check(imm, i):
         exit()
 def typeA_checker(statements, i):
     if len(statements) != 4:
-        file_output.write("Error, invalid Number of Arguments for Type-A Instruction in line: "+str([i]))
+        file_output.write("Error, invalid No. of arguments for Type-A Instruction in line: "+str([i]))
         exit()
     register_check(statements[1],i)
     register_check(statements[2],i)
@@ -80,31 +80,31 @@ def typeA_checker(statements, i):
 
 def typeB_checker(statements,i):
     if len(statements) != 3:
-        file_output.write("Error, Invalid Number of arguments for Type-B instruction in line: ")+str([i])
+        file_output.write("Error, Invalid No. of arguments for Type-B instruction in line: "+str([i]))
         exit()
     register_check(statements[1],i)
     imm_check(statements[2],i)
 
 def typeC_checker(statements,i):
     if len(statements) != 3:
-        file_output.write("Error, Invalid Number of arguments for Type-C instruction in line: ")+str([i])
+        file_output.write("Error, Invalid No. of arguments for Type-C instruction in line: ")+str([i])
         exit()
     register_check(statements[1],i)
     register_check(statements[2],i)
 
 def typeD_checker(statements, i):
     if len(statements) != 3:
-        file_output.write("Error, Invalid Number of Arguments for Type-D Instruction in line: "+statements([i]))
+        file_output.write("Error, Invalid No. of arguments for Type-D Instruction in line: "+statements([i]))
         exit()
 
 def typeE_checker(statements, i):
     if len(statements) != 2:
-        file_output.write("Error, Invalid Number of Argument for type-E Instruction in line: "+str([i]))
+        file_output.write("Error, Invalid No. of arguments for type-E Instruction in line: "+str([i]))
         exit()
 
 def typeF_checker(statements, i):
     if len(statements) != 1:
-        file_output.write("Error, Invalid Number of Arguments for Type-F Instriuction in line: "+str([i]))
+        file_output.write("Error, Invalid No. of arguments for Type-F Instriuction in line: "+str([i]))
         exit()
 
 statements=[]
@@ -133,7 +133,7 @@ labels={}
 program_counter=0
 for i in range(len(statements)):
     if statements[i][0][len(statements[i][0])-1]==':':
-        file_output.write("Error, Invalid statement in line: ",+str(i))
+        file_output.write("Error, Invalid statement in line: "+str(i))
         exit()
     labels[statements[i][0][:-1]]=program_counter
     statements[i].remove(statements[i][0])
