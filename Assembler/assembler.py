@@ -1,6 +1,7 @@
 import sys
 
 file_input=sys.stdin
+<<<<<<< HEAD
 file_output=sys.stdout
 
 opcodes={
@@ -36,3 +37,6 @@ registers={
     "R6":"110",
     "FLAGS":"111",
 }
+=======
+file_output=sys.stdout
+>>>>>>> 8dfa47c40f7d11d60062e89093bc2c0d927babfc
