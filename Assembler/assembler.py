@@ -53,19 +53,19 @@ def variable_begin_at_start(statements):
         count=0
         if statements[i][0]:
             if count==1:
-                file_output.write("Error, All the variable definition are not made at the begining og the assembly language, speciically "(statements[i][0]+" in line: "+str(i)))
+                file_output.write("Error, All the variable definitions are not made at the beginning of the assembly language, specifically "(statements[i][0]+" in line: "+str(i)))
                 exit()
         else:
             count=1
 
 def imm_check(imm, i):
     if "$"!=imm[0]:
-        file_output.write("Error, Immediate not probided, line: "+str(i))
+        file_output.write("Error, Immediate not provided, line: "+str(i))
         exit()
     try:
         x=int(imm[1:])
         if(x>=128 or x<0):
-            file_output.write("Error,, The Immdiate exceeds the limit from 0 to 127, line: "+str(i))
+            file_output.write("Error, The Immediate exceeds the limit from 0 to 127, line: "+str(i))
             exit()
     except ValueError:
         file_output.write("Error, The immediate should be a whole number, line: "+str(i))
@@ -87,7 +87,7 @@ def typeB_checker(statements,i):
 
 def typeC_checker(statements,i):
     if len(statements) != 3:
-        file_output.write("Error, Invalid Number of arguments for Type-B instruction in line: ")+str([i])
+        file_output.write("Error, Invalid Number of arguments for Type-C instruction in line: ")+str([i])
         exit()
     register_check(statements[1],i)
     register_check(statements[2],i)
@@ -226,7 +226,7 @@ def typeF(statements):
 for i in range(len(statements)):
     if('FLAGS' in statements[i]):
         if(len(statements[i])!=3 or statements[i][0]!='movr' or statements[i][1]!='FLAGS'):
-            file_output.write("Error,In use of FLAGS register in line "+str(i))
+            file_output.write("Error, In use of FLAGS register in line "+str(i))
             exit()
         else:
             typeC_checker(statements[i],i)
