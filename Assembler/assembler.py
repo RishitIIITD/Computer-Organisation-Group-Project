@@ -114,13 +114,9 @@ for line in file_input:
         continue
     lst=line.split()
     statements.append(lst)
-    if line=="q":
-        file_output.write("You entered q\n")
     if line=="hlt":
         break
-
-print(len(statements))
-
+    
 for i in statements:
     print(i)
 
@@ -136,7 +132,7 @@ for i in range(len(statements)):
 labels={}
 program_counter=0
 for i in range(len(statements)):
-    if statements[i][0][len(statements[i][0]-1)]==':':
+    if statements[i][0][len(statements[i][0])-1]==':':
         file_output.write("Error, Invalid statement in line: ",+str(i))
         exit()
     labels[statements[i][0][:-1]]=program_counter
