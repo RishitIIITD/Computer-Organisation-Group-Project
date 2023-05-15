@@ -198,3 +198,78 @@ for i in range(len(statements)):
 if not(hlt_present):
     file_output.write("Error, missing hlt instruction")
     exit()
+
+def get_memaddressA(mem_address):
+    return vars[mem_address]
+
+def get_memaddress(mem_address):
+    return labels[mem_address]
+
+def typeA(mem_address):
+    return opcodes[statements[0]] + "0"*2 + registers[statements[1]] + registers[statements[2]] + registers[statements[3]]
+
+def typeB (mem_address):
+    return (opcodes[statements[0]] + registers[statements[1]] + DecimalToBinary(int(statements[2])))
+
+def typeC(statements):
+    return opcodes[statements[0]] +"0"*5 + registers[statements[1]] + registers[statements[2]]
+
+def typeD(statements):
+    return opcodes[statements[0]] + "0" + registers[statements[1]] + DecimalToBinary(int(get_memaddressA(statements[2])))
+    
+def typeE(statements):
+    return (opcodes[statements[0]]+ "0"*4 + DecimalToBinary(int(get_memaddress(statements[1]))))
+
+def typeF(statements):
+    return opcodes[statements[0]]+ "0"*11
+
+for i in range(len(statements)):
+    if('FLAGS' in statements[i]):
+        if(len(statements[i])!=3 or statements[i][0]!='movr' or statements[i][1]!='FLAGS'):
+            file_output.write("Error,In use of FLAGS register in line "+str(i))
+            exit()
+        else:
+            typeC_checker(statements[i],i)
+    if(statements[i][0] in ['add','sub','mul','xor','or','and']):
+        typeA_checker(statements[i], i)
+
+    elif(statements[i][0] in ['mov','ls','rs']):
+        typeB_checker(statements[i], i)
+
+    elif(statements[i][0] in ['movr','div','not','cmp']):
+        typeC_checker(statements[i], i)
+
+    elif(statements[i][0] in ['ld','st']):
+        typeD_checker(statements[i], i)
+
+    elif(statements[i][0] in ['jmp','jlt','jgt','je']):
+        typeE_checker(statements[i], i)
+
+    elif(statements[i][0]=="hlt"):
+        typeF_checker(statements[i], i)
+
+for i in range(len(statements)):
+    if statements[i][0] in ['mov','ls','rs']:
+        if("$" in statements[i][2]):
+            statements[i][2]=statements[i][2][1:]
+
+for i in range(len(statements)):
+    if(statements[i][0] in ['add','sub','mul','xor','or','and']):
+        file_output.write(typeA(statements[i])+"\n")
+
+    elif(statements[i][0] in ['mov','ls','rs']):
+        file_output.write(typeB(statements[i])+"\n")
+
+    elif(statements[i][0] in ['movr','div','not','cmp']):
+        file_output.write(typeC(statements[i])+"\n")
+
+    elif(statements[i][0] in ['ld','st']):
+        file_output.write(typeD(statements[i])+"\n")
+
+    elif(statements[i][0] in ['jmp','jlt','jgt','je']):
+        file_output.write(typeE(statements[i])+"\n")
+
+    elif(statements[i][0]=="hlt"):
+        file_output.write(typeF(statements[i]))
+
+file_output.close()
