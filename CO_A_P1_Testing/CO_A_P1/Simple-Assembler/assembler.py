@@ -115,15 +115,12 @@ def typeF_checker(statements, i):
 
 import fileinput
 statements=[]
-with open("sample.txt",'r') as f:
-    for line in f:
-        line=line.strip()
-        if line=="\n" or line==" " or line=="":
-            continue
-        lst=line.split()
-        statements.append(lst)
-
-out=open("output.txt",'w')
+for line in file_input.readlines():
+    line=line.strip()
+    if line=="\n" or line==" " or line=="":
+        continue
+    lst=line.split()
+    statements.append(lst)
 
 for i in range(len(statements)):
     if statements[i][0] in ["mov","ls","rs"]:
@@ -131,7 +128,7 @@ for i in range(len(statements)):
             if ('$' not in statements[i][2]):
                 statements[i][0]=statements[i][0]+'r'
         except:
-            out.write("Error, Immediate not in line: "+str(i))
+            file_output.write("Error, Immediate not in line: "+str(i))
             exit()
 
 labels={}
@@ -139,12 +136,12 @@ program_counter=0
 for i in range(len(statements)):
     if statements[i][0][len(statements[i][0])-1]==':':
         if len(statements[i][0])==1:
-            out.write("Error, Invalid statement in line: "+str(i))
+            file_output.write("Error, Invalid statement in line: "+str(i))
             exit()
         labels[statements[i][0][:-1]]=program_counter
         statements[i].remove(statements[i][0])
         if len(statements[i])==0:
-            out.write("Error, empty label in line: "+str(i))
+            file_output.write("Error, empty label in line: "+str(i))
             exit()
     if statements[i][0]!="var":
         program_counter+=1
@@ -154,12 +151,12 @@ for line in statements:
         statements.remove(line)
 
 if len(statements)>128:
-    out.write("Error, No. of instructions more than 128")
+    file_output.write("Error, No. of instructions more than 128")
     exit()
 
 for i in range(len(statements)):
     if statements[i][0] not in opcodes.keys() and statements[i][0]!="var":
-        out.write("Error, Invalid instruction name in line: "+str(i))
+        file_output.write("Error, Invalid instruction name in line: "+str(i))
         exit()
 
 instructions={}
@@ -178,11 +175,11 @@ for i in range(len(statements)):
 for i in range(len(statements)):
     if statements[i][0] in ["ld","st"]:
         if statements[i][2] not in vars:
-            out.write("Error, Undefined variable used in line: "+str(i))
+            file_output.write("Error, Undefined variable used in line: "+str(i))
             exit()
     if statements[i][0] in ["jmp","jlt","jgt","je"]:
         if statements[i][1] not in labels.keys():
-            out.write("Error, Undefined label used in line: "+str(i))
+            file_output.write("Error, Undefined label used in line: "+str(i))
             exit()
 
 hlt_present=False
@@ -192,13 +189,13 @@ for i in range(len(statements)):
             if (statements[i][0]=="hlt" and len(statements[i])==1):
                 hlt_present=True
             else:
-                out.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
+                file_output.write("Error,  Invalid Use of hlt instruction in line: "+str(i))
                 exit()
         else:
-            out.write("Error, hlt must be the last instruction in line: "+str(i))
+            file_output.write("Error, hlt must be the last instruction in line: "+str(i))
             exit()
 if not(hlt_present):
-    out.write("Error, missing hlt instruction")
+    file_output.write("Error, missing hlt instruction")
     exit()
 
 def get_memaddressA(mem_address):
@@ -228,7 +225,7 @@ def typeF(statements):
 for i in range(len(statements)):
     if('FLAGS' in statements[i]):
         if(len(statements[i])!=3 or statements[i][0]!='movr' or statements[i][1]!='FLAGS'):
-            out.write("Error, In use of FLAGS register in line "+str(i))
+            file_output.write("Error, In use of FLAGS register in line "+str(i))
             exit()
         else:
             typeC_checker(statements[i],i)
@@ -257,21 +254,21 @@ for i in range(len(statements)):
 
 for i in range(len(statements)):
     if(statements[i][0] in ['add','sub','mul','xor','or','and']):
-        out.write(typeA(statements[i])+"\n")
+        file_output.write(typeA(statements[i])+"\n")
 
     elif(statements[i][0] in ['mov','ls','rs']):
-        out.write(typeB(statements[i])+"\n")
+        file_output.write(typeB(statements[i])+"\n")
 
     elif(statements[i][0] in ['movr','div','not','cmp']):
-        out.write(typeC(statements[i])+"\n")
+        file_output.write(typeC(statements[i])+"\n")
 
     elif(statements[i][0] in ['ld','st']):
-        out.write(typeD(statements[i])+"\n")
+        file_output.write(typeD(statements[i])+"\n")
 
     elif(statements[i][0] in ['jmp','jlt','jgt','je']):
-        out.write(typeE(statements[i])+"\n")
+        file_output.write(typeE(statements[i])+"\n")
 
     elif(statements[i][0]=="hlt"):
-        out.write(typeF(statements[i]))
+        file_output.write(typeF(statements[i]))
 
-out.close()
+file_output.close()
