@@ -29,7 +29,7 @@ class AsmGrader(Grader):
 		
 		for test in tests:
 			self.printSev(self.HIGH, bcolors.OKCYAN + "Running " + test + bcolors.ENDC)
-			errors = os.popen("./run < " + "../automatedTesting/tests/assembly/" + self.ASM_ERROR_DIR + "/" + test).read() 
+			errors = os.popen("sh run.sh < " + "../automatedTesting/tests/assembly/" + self.ASM_ERROR_DIR + "/" + test).read() 
 			self.printSev(self.HIGH, errors, end="")
 			self.printSev(self.HIGH, "============================================\n")
 
@@ -46,7 +46,7 @@ class AsmGrader(Grader):
 		os.chdir(self.ASM_RUN_DIR)
 		
 		for test in tests:
-			generatedBin = os.popen("./run < " + "../automatedTesting/tests/assembly/" + genDir + "/" + test).readlines() 
+			generatedBin = os.popen("sh run.sh < " + "../automatedTesting/tests/assembly/" + genDir + "/" + test).readlines() 
 			expectedBin = os.popen("cat " + "../automatedTesting/tests/assembly/" + expDir + "/" + test).readlines() 
 
 			if self.diff(generatedBin, expectedBin):
