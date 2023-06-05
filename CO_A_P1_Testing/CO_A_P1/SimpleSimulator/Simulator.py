@@ -1,3 +1,8 @@
+import sys
+
+file_input=sys.stdin
+file_output=sys.stdout
+
 def DecimalToBinary(num):
     binary="{0:b}".format(int(num))
     x=16-len(binary)
@@ -31,6 +36,7 @@ registers={
     "110":0,
     "111":"0"*16
 }
+
 memLines={}
 for i in range(128):
     memLines[i]="0"*16
@@ -38,17 +44,16 @@ for i in range(128):
 lines=[]
 memIndex=0
 
-import sys
-
-for line in sys.stdin:
-    line=line.strip()
-    #sys.stdout.write("\nLine:\n"+line)
-    
-    if line==" " or line=="\n" or line=="":
-        continue
-    memLines[memIndex]=line
-    memIndex+=1
-    lines.append(line)
+with open("input.txt",'r') as reader:
+    for line in reader:
+        line=line.strip()
+        #sys.stdout.write("\nLine:\n"+line)
+        
+        if line==" " or line=="\n" or line=="":
+            continue
+        memLines[memIndex]=line
+        memIndex+=1
+        lines.append(line)
 
 isFlagNotSet=True
 isJump=False
@@ -190,7 +195,24 @@ while(prgCnt<len(lines)):
     if isFlagNotSet==True:
         registers['111']='0'*16
 
-    sys.stdout.write(str(DecimalToBinary(prgCnt))[9:]+" "+str(DecimalToBinary(registers["000"]))+" "+str(DecimalToBinary(registers["001"]))+" "+str(DecimalToBinary(registers["010"]))+" "+str(DecimalToBinary(registers["011"]))+" "+str(DecimalToBinary(registers["100"]))+" "+str(DecimalToBinary(registers["101"]))+" "+str(DecimalToBinary(registers["110"]))+" "+registers["111"]+"\n")
+    file_output.write(DecimalToBinary(prgCnt)[9:])
+    file_output.write('      ')
+    file_output.write(DecimalToBinary(registers["000"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["001"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["010"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["011"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["100"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["101"]))
+    file_output.write(' ')
+    file_output.write(DecimalToBinary(registers["110"]))
+    file_output.write(' ')
+    file_output.write(registers["111"])
+    file_output.write('\n')
     
     prgCnt+=1
     
@@ -206,5 +228,4 @@ while(prgCnt<len(lines)):
         break
 
 for memAddrs in memLines:
-    sys.stdout.write(memLines[memAddrs]+"\n")
-    
+    file_output.write(memLines[memAddrs]+"\n")
