@@ -54,7 +54,6 @@ while True:
     except EOFError:
         break
 
-
 isFlagNotSet=True
 isJump=False
 isHalt=False
@@ -195,14 +194,14 @@ while(prgCnt<len(lines)):
     if isFlagNotSet==True:
         registers['111']='0'*16
 
-    print(DecimalToBinary(prgCnt)[9:], end='        ')
-    print(DecimalToBinary(registers["000"]), end=' ')
-    print(DecimalToBinary(registers["001"]), end=' ')
-    print(DecimalToBinary(registers["010"]), end=' ')
-    print(DecimalToBinary(registers["011"]), end=' ')
-    print(DecimalToBinary(registers["100"]), end=' ')
-    print(DecimalToBinary(registers["101"]), end=' ')
-    print(DecimalToBinary(registers["110"]), end=' ')
+    print(DecimalToBinary(prgCnt)[9:],end='        ')
+    print(DecimalToBinary(registers["000"]),end=' ')
+    print(DecimalToBinary(registers["001"]),end=' ')
+    print(DecimalToBinary(registers["010"]),end=' ')
+    print(DecimalToBinary(registers["011"]),end=' ')
+    print(DecimalToBinary(registers["100"]),end=' ')
+    print(DecimalToBinary(registers["101"]),end=' ')
+    print(DecimalToBinary(registers["110"]),end=' ')
     print(registers["111"])
 
     prgCnt+=1
