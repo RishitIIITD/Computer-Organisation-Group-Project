@@ -41,9 +41,9 @@ for i in range(128):
 lines=[]
 memIndex=0
 
-while True:
-    try:
-        line = input().strip()
+with open("input.txt",'r') as reader:
+    for line in reader.readlines():
+        line = line.strip()
 
         if line == "":
             break
@@ -51,8 +51,6 @@ while True:
         memLines[memIndex] = line
         memIndex += 1
         lines.append(line)
-    except EOFError:
-        break
 
 isFlagNotSet=True
 isJump=False
